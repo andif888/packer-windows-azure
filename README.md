@@ -96,3 +96,28 @@ cd ./terraform
 # run terraform destroy
 terraform destroy -var-file ../shared_vars.hcl
 ```
+
+## Optional
+
+### Install Windows Updates during build
+
+You can optionally install Windows Updates during the build operation. 
+If you would like this feature then you need to edit the [windows.pkr.hcl](./packer/windows.pkr.hcl) file before the build operation. Please uncomment the following sections:  
+  
+Line: 7-10
+```hcl
+    windows-update = {
+      version = "0.14.0"
+      source = "github.com/rgl/windows-update"
+    }
+```
+Line: 217-224
+```hcl
+  provisioner "windows-update" {
+    search_criteria = "IsInstalled=0"
+    filters = [
+      "exclude:$_.Title -like '*Preview*'",
+      "include:$true",
+    ]
+    update_limit = 25
+  }

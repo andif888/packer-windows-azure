@@ -4,10 +4,10 @@ packer {
       version = ">= 1.0.0"
       source  = "github.com/hashicorp/azure"
     }
-    windows-update = {
-      version = "0.14.0"
-      source = "github.com/rgl/windows-update"
-    }
+#    windows-update = {
+#      version = "0.14.0"
+#      source = "github.com/rgl/windows-update"
+#    }
   }
 }
 
@@ -225,7 +225,6 @@ build {
 
   provisioner "powershell" {
    inline = [
-        " # NOTE: the following *3* lines are only needed if the you have installed the Guest Agent.",
         "  while ((Get-Service RdAgent).Status -ne 'Running') { Start-Sleep -s 5 }",
         "  while ((Get-Service WindowsAzureGuestAgent).Status -ne 'Running') { Start-Sleep -s 5 }"
    ]
@@ -254,10 +253,6 @@ build {
 
   provisioner "powershell" {
    inline = [
-        " # NOTE: the following *3* lines are only needed if the you have installed the Guest Agent.",
-        "  while ((Get-Service RdAgent).Status -ne 'Running') { Start-Sleep -s 5 }",
-        "  while ((Get-Service WindowsAzureGuestAgent).Status -ne 'Running') { Start-Sleep -s 5 }",
-
         "& $env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /quiet /quit /mode:vm",
         "while($true) { $imageState = Get-ItemProperty HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\State | Select ImageState; if($imageState.ImageState -ne 'IMAGE_STATE_GENERALIZE_RESEAL_TO_OOBE') { Write-Output $imageState.ImageState; Start-Sleep -s 10  } else { break } }"
    ]
