@@ -9,14 +9,17 @@
       - firefox
       - fslogix
 
-  tasks:
+  roles:
+    # Adding some ansible-role just for fun
+    - { name: ansible-role-win-bginfo }
 
-      # We have installed windows update before running this playbook, so it makes sense to reboot first.
-    - name: Reboot first
-      win_reboot:
-        reboot_timeout: 3600
-        pre_reboot_delay: 10
-        post_reboot_delay: 30
+  pre_tasks:
+    # If we have installed lots of windows update before running this playbook, then it makes sense to reboot first.
+    # - name: Reboot first
+    #   win_reboot:
+    #     reboot_timeout: 3600
+    #     pre_reboot_delay: 10
+    #     post_reboot_delay: 30
 
       # This task is not necessary but a nice optimization
     - name: Optimize powershell
@@ -30,6 +33,7 @@
         iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
         $env:Path += ";" + $env:AllUsersProfile + "\chocolatey\bin"
 
+  tasks:
       # This task is not necessary because ansible connects using SSH, but it's quite nice to have WINRM working
     - name: Configure remote for ansible
       win_shell: |

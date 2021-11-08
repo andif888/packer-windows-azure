@@ -1,2 +1,3 @@
 ---
 - src: https://github.com/andif888/ansible-role-win-restic
+- src: https://github.com/andif888/ansible-role-win-bginfo
