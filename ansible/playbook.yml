@@ -1,0 +1,62 @@
+---
+- hosts: windows
+  become: true
+  gather_facts: no
+
+  vars: 
+    chocolatey_packages:
+      - 7zip.install
+      - firefox
+      - fslogix
+
+  tasks:
+
+      # We have installed windows update before running this playbook, so it makes sense to reboot first.
+    - name: Reboot first
+      win_reboot:
+        reboot_timeout: 3600
+        pre_reboot_delay: 10
+        post_reboot_delay: 30
+
+      # This task is not necessary but a nice optimization
+    - name: Optimize powershell
+      win_shell: |
+        [Net.ServicePointManager]::SecurityProtocol = 'Tls12'
+        iex ((New-Object System.Net.Webclient).DownloadString('https://raw.githubusercontent.com/andif888/optimize-powershell-assemblies/master/optimize-powershell-assemblies.ps1'))
+
+    - name: Install Chocolatey
+      win_shell: |
+        [Net.ServicePointManager]::SecurityProtocol = 'Tls12'
+        iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+        $env:Path += ";" + $env:AllUsersProfile + "\chocolatey\bin"
+
+      # This task is not necessary because ansible connects using SSH, but it's quite nice to have WINRM working
+    - name: Configure remote for ansible
+      win_shell: |
+        [Net.ServicePointManager]::SecurityProtocol = 'Tls12'
+        iex ((New-Object System.Net.Webclient).DownloadString('https://github.com/ansible/ansible/raw/devel/examples/scripts/ConfigureRemotingForAnsible.ps1'))
+
+    - name: Remove Appx Packages
+      win_shell: |
+        Get-AppXPackage | Where {($_.name -like "*edge*")} | Remove-AppXPackage -ErrorAction SilentlyContinue
+        Get-AppXPackage | Where {($_.name -like "*549981C3F5F1*")} | Remove-AppXPackage -ErrorAction SilentlyContinue
+        Get-AppXPackage | Where {($_.name -like "*Bing*")} | Remove-AppXPackage -ErrorAction SilentlyContinue
+        Get-AppXPackage | Where {($_.name -like "*OneDrive*")} | Remove-AppXPackage -ErrorAction SilentlyContinue
+        Get-AppXPackage | Where {($_.name -like "*DesktopApp*")} | Remove-AppXPackage -ErrorAction SilentlyContinue
+        Get-AppXPackage | Where {($_.name -like "*GetHelp*")} | Remove-AppXPackage -ErrorAction SilentlyContinue
+        Get-AppXPackage | Where {($_.NonRemovable -eq $false) -and ($_.IsFramework -eq $false)} | Remove-AppXPackage -ErrorAction SilentlyContinue
+      ignore_errors: yes
+
+      # This task is not necessary but shows how to integrate ansible-roles
+    - name: Include role ansible-role-win-restic
+      include_role:
+        name: ansible-role-win-restic
+      vars:
+        restic_version: '0.12.1'
+
+      # This task is not necessary but installs some software
+    - name: Install packages with chocolatey
+      win_chocolatey:
+        name: '{{ item }}'
+        state: present
+      loop: '{{ chocolatey_packages }}'

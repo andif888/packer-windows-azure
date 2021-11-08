@@ -1,0 +1,65 @@
+# Subscription under which the build will be performed
+azure_subscription_id           = "1111111-2222-3333-4444-55555555"
+
+# The Active Directory service principal associated with your builder.
+azure_client_id                 = "99999999-8888-7777-6666-55555555"
+
+# The password or secret for your service principal.
+azure_client_secret             = "3IHppUIUy1.qKJLQ$70ap~_vNHha3eG8Cq"
+
+# The Active Directory tenant identifier with which your client_id and subscription_id are associated. 
+azure_tenant_id                 = "44444444-5555-6666-7777-88888888"
+
+# Specify the managed image resource group name where the result of the Packer build will be saved. 
+azure_resource_group_name       = "pr_infra_packer_rg"
+
+# Azure datacenter in which your VM will build.
+azure_location                  = "Germany West Central"
+
+# Name of the shared image gallery
+azure_shared_image_gallery_name = "pr_infra_gallery"
+
+# Resulting name of the managed image in the share image gallery
+azure_managed_image_name        = "window-11-packer"
+
+###############################################
+# only used by Terraform but centrally defined 
+###############################################
+
+# Resulting publisher name of the managed image in the share image gallery
+azure_managed_image_publisher   = "PRWindowDesktop"
+
+# Resulting offer name of the managed image in the share image gallery
+azure_managed_image_offer       = "windows-11"
+
+# Resulting sku of the managed image in the share image gallery
+azure_managed_image_sku         = "win11-21h2-avd"
+
+# The generation of HyperV that the Virtual Machine used to create the Shared Image is based on. 
+# Possible values are V1 and V2. Defaults to V1. Window 11 Marketplace images are V2.
+azure_managed_image_hyper_v_generation = "V2"
+
+############################################
+# only used by Packer but centrally defined
+############################################
+
+# Name of the publisher to use for your base image (source image) (Azure Marketplace Images only).
+azure_image_publisher           = "MicrosoftWindowsDesktop"
+
+# Name of the publisher's offer to use for your base image (source image) (Azure Marketplace Images only).
+azure_image_offer               = "windows-11"
+
+# SKU of the image offer to use for your base image (source image) (Azure Marketplace Images only).
+azure_image_sku                 = "win11-21h2-avd"
+
+# Resulting version of the managed image in the shared image gallery
+azure_shared_image_gallery_destination_image_version        = "1.0.1"
+
+# Storage account of the managed image in the shared image gallery
+azure_shared_image_gallery_destination_storage_account_type = "Standard_LRS"
+
+# Size of the VM used for building. This can be changed when you deploy a VM
+azure_vm_size                   = "Standard_B2s"
+
+# The main ansible playbook which packer executes
+ansible_playbook_file           = "../ansible/playbook.yml"
