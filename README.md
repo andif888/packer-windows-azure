@@ -3,6 +3,10 @@
 This repository builds Windows Master Images and publishes it to Azure Shared Image Gallery with a single [run command](./run.sh).\
 It nicely integrates [Packer](https://www.packer.io/downloads), [Terraform](https://www.terraform.io/downloads.html) and [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html). Hook this thing into a real CI/CD pipeline and run it.
 
+An additional trick is: Variables from Terrafrom can be reused in Packer, because since Packer 1.5 
+HCL2 templates are supported and HCL2 is by the way the preferred way to write Packer configurations.
+This is why there is a **shared_vars.hcl** file.
+
 **Terraform** is used to fulfill the pre-requesites in Azure.
 
 Terraform creates:
