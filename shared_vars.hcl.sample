@@ -27,7 +27,7 @@ azure_managed_image_name        = "window-11-packer"
 ###############################################
 
 # Resulting publisher name of the managed image in the share image gallery
-azure_managed_image_publisher   = "PRWindowDesktop"
+azure_managed_image_publisher   = "PRWindowsDesktop"
 
 # Resulting offer name of the managed image in the share image gallery
 azure_managed_image_offer       = "windows-11"

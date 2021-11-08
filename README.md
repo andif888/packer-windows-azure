@@ -16,7 +16,7 @@ Terraform creates:
 - a shared image definition
 
 **Packer** is used to build the windows master image from a Windows Marketplace image. 
-Packer is also reponsible for versioning the the master image and placing into the share image gallery. 
+Packer is also responsible for versioning the master image and placing it into the share image gallery. 
 
 To customize the master image, Packer runs **Ansible** and a specific [ansible playbook](./ansible/playbook.yml).\
 The ansible playbook is quite basic, but this is the place to do the real customization of you windows master image.
@@ -45,7 +45,7 @@ az ad sp create-for-rbac \
 ### Step 1: Adjust variables
 
 Rename the file [shared_vars.hcl.sample](./shared_vars.hcl.sample) to `shared_vars.hcl` and adjust the variables for your Azure environment. 
-Some documentation on each variable is inside the sample file.
+Documentation on each variable is inside the sample file.
 
 ```bash
 # Rename the file
@@ -125,3 +125,19 @@ Line: 217-224
     ]
     update_limit = 25
   }
+```
+
+If running windows updates during build, then it sometimes makes sense to reboot the machine 
+before doing addition configuration tasks using ansible. There is a commented `pre_tasks` 
+in the [ansible playbook](./ansible/playbook.yml) to do exactly this.\
+Simply uncomment the relevant **line 18-22**.
+
+```yaml
+  pre_tasks:
+    # If we have installed lots of windows update before running this playbook, then it makes sense to reboot first.
+    - name: Reboot first
+      win_reboot:
+        reboot_timeout: 3600
+        pre_reboot_delay: 10
+        post_reboot_delay: 30
+```
